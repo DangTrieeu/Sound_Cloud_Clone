@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../../styles/users.css";
 
 interface IUser {
+  _id: string;
   email: string;
   name: string;
   role: string;
@@ -62,9 +63,9 @@ const UsersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {listUsers.map((item: IUser, index) => {
+          {listUsers.map((item: IUser) => {
             return (
-              <tr key={index}>
+              <tr key={item._id}>
                 <td>{item.email}</td>
                 <td>{item.name}</td>
                 <td>{item.role}</td>
