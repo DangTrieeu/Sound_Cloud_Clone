@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import UsersPage from "./screens/users.page.tsx";
 //import './index.css'
 
 const router = createBrowserRouter([
@@ -12,11 +13,7 @@ const router = createBrowserRouter([
 
   {
     path: "/users",
-    element: (
-      <div>
-        <h1>MANAGE USERS</h1>
-      </div>
-    ),
+    element: <UsersPage />,
   },
   {
     path: "/tracks",

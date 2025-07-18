@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import TodoNew from "./component/todoNew.component";
-import TodoList from "./component/todoList.component";
+import TodoNew from "./components/todoNew.component";
+import TodoList from "./components/todoList.component";
 
 function App() {
   interface ITodo {
