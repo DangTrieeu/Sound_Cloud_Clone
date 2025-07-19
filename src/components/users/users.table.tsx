@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 ///import "../../styles/users.css";
-import { Table } from 'antd';
+import { Table, Button, Modal } from 'antd';
 import type { TableProps } from 'antd';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 interface IUser {
   _id: string;
@@ -72,33 +73,47 @@ const UsersTable = () => {
     },
   ];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
-      <h2>Users Table</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Users Table</h2>
+        <Button
+          icon={<PlusCircleOutlined />}
+          type="primary"
+          onClick={showModal}
+        >Add new</Button>
+      </div>
+
+
       < Table
         dataSource={listUsers}
         columns={columns}
       />
-      {/* <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {listUsers.map((item: IUser) => {
-            return (
-              <tr key={item._id}>
-                <td>{item.email}</td>
-                <td>{item.name}</td>
-                <td>{item.role}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table> */}
+      <Modal
+        title="Basic Modal"
+        //closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 };
