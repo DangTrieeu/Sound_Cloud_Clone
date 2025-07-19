@@ -29,7 +29,7 @@ const UsersTable = () => {
   };
   const getListUsers = async () => {
     const access_token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjg3OWY2NjgzZTZiYjgyOTMxOWUyYWY2IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTI4Mjc5OTQsImV4cCI6MTgzOTIyNzk5NH0.U7RH7ag6YYjl5Qw_nwk5SCAiJoQnQ_3mivGO4EVVdO0";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjg3OWY2NjgzZTZiYjgyOTMxOWUyYWY2IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTI4ODU3MjAsImV4cCI6MTgzOTI4NTcyMH0.1q3XI68tQfjot1mKQzhhnb8XnP5UKyDLl40Tc_8QkAU";
     const responseListUsers = await fetch(
       "http://localhost:8000/api/v1/users/all",
       {
@@ -49,7 +49,7 @@ const UsersTable = () => {
     //getUserLogin();
     getListUsers();
   }, []);
-  console.log("List of users:", listUsers);
+
   return (
     <div>
       <h2>Users Table</h2>
