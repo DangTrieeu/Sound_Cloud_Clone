@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import "../../styles/users.css";
+///import "../../styles/users.css";
+import { Table } from 'antd';
+import type { TableProps } from 'antd';
 
 interface IUser {
   _id: string;
@@ -49,12 +51,35 @@ const UsersTable = () => {
     //getUserLogin();
     getListUsers();
   }, []);
+  //Table of antd have columns and dataSource
+  //columns is an array of objects that define the structure of the table
+  //dataSource is the data that will be displayed in the table
+  const columns: TableProps<IUser>['columns'] = [
+    {
+      title: 'Email',
+      dataIndex: 'email',
+
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+
+    },
+  ];
 
   return (
     <div>
       <h2>Users Table</h2>
-
-      <table>
+      < Table
+        dataSource={listUsers}
+        columns={columns}
+      />
+      {/* <table>
         <thead>
           <tr>
             <th>Email</th>
@@ -73,7 +98,7 @@ const UsersTable = () => {
             );
           })}
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 };
