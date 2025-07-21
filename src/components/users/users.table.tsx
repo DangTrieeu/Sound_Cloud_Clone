@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 ///import "../../styles/users.css";
-import { Table, Button, Modal, Input, notification } from 'antd';
+import { Table, Button, notification, message, Popconfirm } from 'antd';
+import type { PopconfirmProps } from 'antd';
 import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
+
 import CreateUsersModal from "./create.users.modal";
 import UpdateUsersModal from "./update.users.modal";
 
@@ -25,6 +27,10 @@ const UsersTable = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<null | IUser>(null);
   const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjg3OWY2NjgzZTZiYjgyOTMxOWUyYWY2IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTI4OTkzNDgsImV4cCI6MTgzOTI5OTM0OH0.uNZ8HjZunJDjD9BnGxuRVCUJzEqO7DabJVRK2OKL0Sg";
+
+
+
+
 
   //fetch data from API
   const getUserLogin = async () => {
@@ -66,6 +72,33 @@ const UsersTable = () => {
     setListUsers(dataListUsers.data.result);
   };
 
+  const deleteUser = async (userId: string) => {
+
+    const responseDeleteUser = await fetch(
+      `http://localhost:8000/api/v1/users/${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const dataDeleteUser = await responseDeleteUser.json();
+
+    if (dataDeleteUser.data) {
+      getListUsers(); // Refresh the list of users after deleting a user
+      notification.success({
+        message: 'Success',
+        description: 'User deleted'
+      });
+    } else {
+      notification.error({
+        message: 'Error',
+        description: dataDeleteUser.message || 'Error deleting user'
+      });
+    }
+  }
 
   useEffect(() => {
     //getUserLogin();
@@ -96,24 +129,38 @@ const UsersTable = () => {
       title: 'Actions',
       render: (value, record) => {
         return (
-          <div>
-            <button onClick={() => {
-              setIsUpdateModalOpen(true);
-              setSelectedUser(record);
-            }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button
+              type="default"
+              style={{ backgroundColor: '#faad14', color: 'white' }}
+              onClick={() => {
+                setIsUpdateModalOpen(true);
+                setSelectedUser(record);
+              }}>
               Edit
-            </button>
-          </div>
+            </Button>
+
+            <Popconfirm
+              title="Delete the User"
+              placement="rightTop"
+              description={`Are you sure to delete user ${record.name} ?`}
+              onConfirm={() => deleteUser(record._id)}
+
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary" danger>
+                Delete
+              </Button>
+            </Popconfirm>
+
+
+          </div >
         )
       }
 
     },
   ];
-
-
-
-
-
 
   return (
     <div>
