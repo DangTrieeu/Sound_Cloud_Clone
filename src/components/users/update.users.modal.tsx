@@ -49,14 +49,9 @@ const UpdateUsersModal = (props: IProps) => {
 
 
     const handleOk = async () => {
-        const newUser = {
-            name,
-            email,
-            password,
-            age,
-            gender,
-            address,
-            role,
+        const dataUpdateUser = {
+            _id: selectedUser?._id,
+            name, email, age, gender, address, role
         }
 
         const responseCreateUser = await fetch(
@@ -67,7 +62,7 @@ const UpdateUsersModal = (props: IProps) => {
                     Authorization: `Bearer ${access_token}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...newUser })
+                body: JSON.stringify(dataUpdateUser)
             }
         );
         const dataCreateUser = await responseCreateUser.json();
@@ -76,7 +71,7 @@ const UpdateUsersModal = (props: IProps) => {
             getListUsers(); // Refresh the list of users after creating a new user
             notification.success({
                 message: 'Success',
-                description: 'User created'
+                description: 'User updated'
             });
             setIsUpdateModalOpen(false);
             handleRefreshForm();
