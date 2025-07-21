@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 ///import "../../styles/users.css";
-import { Table, Button, notification, message, Popconfirm } from 'antd';
+import { Table, Button, notification, Popconfirm } from 'antd';
 import type { PopconfirmProps } from 'antd';
 import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -26,33 +26,20 @@ const UsersTable = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<null | IUser>(null);
-  const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjg3OWY2NjgzZTZiYjgyOTMxOWUyYWY2IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTI4OTkzNDgsImV4cCI6MTgzOTI5OTM0OH0.uNZ8HjZunJDjD9BnGxuRVCUJzEqO7DabJVRK2OKL0Sg";
+  const access_token = localStorage.getItem("access_token") || "";
 
+  const [meta, setMeta] = useState({
+    current: 1,
+    pageSize: 5,
+    pages: 0,
+    total: 0,
 
+  }
+  );
 
-
-
-  //fetch data from API
-  const getUserLogin = async () => {
-    const responseLogin = await fetch(
-      "http://localhost:8000/api/v1/auth/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "hoidanit@gmail.com",
-          password: "123456",
-        }),
-      }
-    );
-    const data = await responseLogin.json();
-    console.log("Data fetched:", data);
-  };
-  const getListUsers = async () => {
+  const handleOnChangePagination = async (page: number, pageSize: number) => {
     const responseListUsers = await fetch(
-      "http://localhost:8000/api/v1/users/all",
+      `http://localhost:8000/api/v1/users?current=${page}&pageSize=${pageSize}`,
       {
         method: "GET",
         headers: {
@@ -70,6 +57,42 @@ const UsersTable = () => {
       return;
     }
     setListUsers(dataListUsers.data.result);
+    setMeta({
+      current: dataListUsers.data.meta.current,
+      pageSize: dataListUsers.data.meta.pageSize,
+      pages: dataListUsers.data.meta.pages,
+      total: dataListUsers.data.meta.total,
+    });
+  }
+
+  //fetch data from API
+  const getListUsers = async () => {
+    const responseListUsers = await fetch(
+      `http://localhost:8000/api/v1/users?current=${meta.current}&pageSize=${meta.pageSize}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const dataListUsers = await responseListUsers.json();
+    //console.log("List of users:", dataListUsers.data.result);
+    if (!dataListUsers.data) {
+      notification.error({
+        message: dataListUsers.message || "Error fetching users",
+      });
+      return;
+    }
+    setListUsers(dataListUsers.data.result);
+    setMeta({
+      current: dataListUsers.data.meta.current,
+      pageSize: dataListUsers.data.meta.pageSize,
+      pages: dataListUsers.data.meta.pages,
+      total: dataListUsers.data.meta.total,
+    });
+    console.log("Meta data:", dataListUsers.data.meta);
   };
 
   const deleteUser = async (userId: string) => {
@@ -145,7 +168,6 @@ const UsersTable = () => {
               placement="rightTop"
               description={`Are you sure to delete user ${record.name} ?`}
               onConfirm={() => deleteUser(record._id)}
-
               okText="Yes"
               cancelText="No"
             >
@@ -173,10 +195,17 @@ const UsersTable = () => {
         >Add new</Button>
       </div>
 
-
       < Table
         dataSource={listUsers}
         columns={columns}
+        rowKey="_id"
+        pagination={{
+          current: meta.current,
+          pageSize: meta.pageSize,
+          total: meta.total,
+          showTotal: (total) => `Total ${total} items`,
+          onChange: (page: number, pageSize: number) => handleOnChangePagination(page, pageSize),
+        }}
       />
       <CreateUsersModal
         access_token={access_token}

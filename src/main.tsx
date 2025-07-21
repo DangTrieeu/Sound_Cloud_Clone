@@ -5,7 +5,7 @@ import { createBrowserRouter, Outlet, RouterProvider, Link } from "react-router-
 import UsersPage from "./screens/users.page.tsx";
 //import './index.css'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserOutlined, HomeOutlined } from '@ant-design/icons';
 
 import type { MenuProps } from 'antd';
@@ -25,37 +25,7 @@ const items: MenuItem[] = [
     icon: <UserOutlined />,
 
   },
-  // {
-  //   label: 'Navigation Three - Submenu',
-  //   key: 'SubMenu',
-  //   icon: <SettingOutlined />,
-  //   children: [
-  //     {
-  //       type: 'group',
-  //       label: 'Item 1',
-  //       children: [
-  //         { label: 'Option 1', key: 'setting:1' },
-  //         { label: 'Option 2', key: 'setting:2' },
-  //       ],
-  //     },
-  //     {
-  //       type: 'group',
-  //       label: 'Item 2',
-  //       children: [
-  //         { label: 'Option 3', key: 'setting:3' },
-  //         { label: 'Option 4', key: 'setting:4' },
-  //       ],
-  //     },
-  //   ],
-  // },
-  // {
-  //   key: 'alipay',
-  //   label: (
-  //     <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-  //       Navigation Four - Link
-  //     </a>
-  //   ),
-  // },
+
 ];
 
 const Header = () => {
@@ -70,7 +40,33 @@ const Header = () => {
 };
 
 const Layout = () => {
+  const getUserLogin = async () => {
+    const responseLogin = await fetch(
+      "http://localhost:8000/api/v1/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "hoidanit@gmail.com",
+          password: "123456",
+        }),
+      }
+    );
+    const userLogin = await responseLogin.json();
+    if (userLogin.data) {
+      localStorage.setItem("access_token", userLogin.data.access_token);
+    }
+  };
+
+  useEffect(() => {
+    getUserLogin();
+  }, []);
+
   return (
+
+
     <div>
       <Header />
       <Outlet />
