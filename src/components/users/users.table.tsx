@@ -3,27 +3,27 @@ import { useEffect, useState } from "react";
 import { Table, Button, Modal, Input, notification } from 'antd';
 import type { TableProps } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import CreateUsersModal from "./create.users.modal";
+import UpdateUsersModal from "./update.users.modal";
 
 interface IUser {
   _id: string;
-  email: string;
+
   name: string;
+  email: string;
+  password?: string;
+  age?: number
+  gender?: string;
+  address?: string;
   role: string;
 }
 
 const UsersTable = () => {
   //state
   const [listUsers, setListUsers] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [address, setAddress] = useState("");
-  const [role, setRole] = useState("");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<null | IUser>(null);
   const access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiX2lkIjoiNjg3OWY2NjgzZTZiYjgyOTMxOWUyYWY2IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJhZGRyZXNzIjoiVmlldE5hbSIsImlzVmVyaWZ5Ijp0cnVlLCJuYW1lIjoiSSdtIGFkbWluIiwidHlwZSI6IlNZU1RFTSIsInJvbGUiOiJBRE1JTiIsImdlbmRlciI6Ik1BTEUiLCJhZ2UiOjY5LCJpYXQiOjE3NTI4OTkzNDgsImV4cCI6MTgzOTI5OTM0OH0.uNZ8HjZunJDjD9BnGxuRVCUJzEqO7DabJVRK2OKL0Sg";
 
   //fetch data from API
@@ -56,7 +56,13 @@ const UsersTable = () => {
       }
     );
     const dataListUsers = await responseListUsers.json();
-    console.log("List of users:", dataListUsers.data.result);
+    //console.log("List of users:", dataListUsers.data.result);
+    if (!dataListUsers.data) {
+      notification.error({
+        message: dataListUsers.message || "Error fetching users",
+      });
+      return;
+    }
     setListUsers(dataListUsers.data.result);
   };
 
@@ -86,63 +92,26 @@ const UsersTable = () => {
       dataIndex: 'role',
 
     },
+    {
+      title: 'Actions',
+      render: (value, record) => {
+        return (
+          <div>
+            <button onClick={() => {
+              setIsUpdateModalOpen(true);
+              setSelectedUser(record);
+            }}>
+              Edit
+            </button>
+          </div>
+        )
+      }
+
+    },
   ];
 
 
-  const refreshForm = () => {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setAge("");
-    setGender("");
-    setAddress("");
-    setRole("");
-  }
 
-
-
-  const handleOk = async () => {
-    const newUser = {
-      name,
-      email,
-      password,
-      age,
-      gender,
-      address,
-      role,
-    }
-    //console.log("New user data:", newUser);
-    const responseCreateUser = await fetch(
-      "http://localhost:8000/api/v1/users",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...newUser })
-      }
-    );
-    const dataCreateUser = await responseCreateUser.json();
-    console.log("New user created:", dataCreateUser);
-    if (dataCreateUser.data) {
-      getListUsers(); // Refresh the list of users after creating a new user
-      notification.success({
-        message: 'Success',
-        description: 'User created'
-      });
-      setIsModalOpen(false);
-      refreshForm();
-    }
-    else {
-      notification.error({
-        message: 'Error',
-        description: dataCreateUser.message || 'Failed to create user'
-      });
-    }
-
-
-  };
 
 
 
@@ -153,7 +122,7 @@ const UsersTable = () => {
         <Button
           icon={<PlusCircleOutlined />}
           type="primary"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsCreateModalOpen(true)}
         >Add new</Button>
       </div>
 
@@ -162,81 +131,22 @@ const UsersTable = () => {
         dataSource={listUsers}
         columns={columns}
       />
-      <Modal
-        title="Add New User"
-        //closable={{ 'aria-label': 'Custom Close Button' }}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={() => {
-          setIsModalOpen(false);
-          refreshForm();
-        }}
-        maskClosable={false}
-      >
-        <div>
-          <label htmlFor="">Name</label>
-          <Input placeholder="Enter name"
-            value={name}
-            onChange={(event) => {
-              setName(event.target.value);
-            }} />
-        </div>
-        <div>
-          <label htmlFor="">Email</label>
-          <Input placeholder="Enter email"
-            value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-            }} />
-        </div>
-        <div>
-          <label htmlFor="">Password</label>
-          <Input placeholder="Enter password"
-            value={password}
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-          />
-        </div>
+      <CreateUsersModal
+        access_token={access_token}
+        isCreateModalOpen={isCreateModalOpen}
+        setIsCreateModalOpen={setIsCreateModalOpen}
+        getListUsers={getListUsers}
+      />
 
-        <div>
-          <label htmlFor="">Age</label>
-          <Input placeholder="Enter age"
-            value={age}
-            onChange={(event) => {
-              setAge(event.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="">Gender</label>
-          <Input placeholder="Enter gender"
-            value={gender}
-            onChange={(event) => {
-              setGender(event.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="">Address</label>
-          <Input placeholder="Enter address"
-            value={address}
-            onChange={(event) => {
-              setAddress(event.target.value);
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="">Role</label>
-          <Input placeholder="Enter role"
-            value={role}
-            onChange={(event) => {
-              setRole(event.target.value);
-            }}
-          />
-        </div>
+      <UpdateUsersModal
+        access_token={access_token}
+        isUpdateModalOpen={isUpdateModalOpen}
+        setIsUpdateModalOpen={setIsUpdateModalOpen}
+        getListUsers={getListUsers}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+      />
 
-      </Modal>
     </div>
   );
 };
