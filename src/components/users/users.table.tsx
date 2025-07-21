@@ -92,7 +92,6 @@ const UsersTable = () => {
       pages: dataListUsers.data.meta.pages,
       total: dataListUsers.data.meta.total,
     });
-    console.log("Meta data:", dataListUsers.data.meta);
   };
 
   const deleteUser = async (userId: string) => {

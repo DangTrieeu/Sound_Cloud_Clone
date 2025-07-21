@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Modal, Input, Button, notification } from 'antd';
+
+import { Modal, Input, notification, Form, Select, InputNumber } from 'antd';
+import type { FormProps } from 'antd';
 
 interface IProps {
     access_token: string;
@@ -12,37 +13,20 @@ const CreateUsersModal = (props: IProps) => {
 
     const { access_token, getListUsers, setIsCreateModalOpen, isCreateModalOpen } = props;
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [age, setAge] = useState("");
-    const [gender, setGender] = useState("");
-    const [address, setAddress] = useState("");
-    const [role, setRole] = useState("");
+    const { Option } = Select;
+    const [createForm] = Form.useForm();
 
-    const refreshForm = () => {
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAge("");
-        setGender("");
-        setAddress("");
-        setRole("");
+    const handleRefreshForm = () => {
+        createForm.resetFields();
     }
 
 
 
-    const handleOk = async () => {
-        const newUser = {
-            name,
-            email,
-            password,
-            age,
-            gender,
-            address,
-            role,
-        }
-        //console.log("New user data:", newUser);
+    const onFinish: FormProps['onFinish'] = async (values) => {
+        console.log('Success:', values);
+
+        const newUser = values
+
         const responseCreateUser = await fetch(
             "http://localhost:8000/api/v1/users",
             {
@@ -63,7 +47,7 @@ const CreateUsersModal = (props: IProps) => {
                 description: 'User created'
             });
             setIsCreateModalOpen(false);
-            refreshForm();
+            handleRefreshForm();
         }
         else {
             notification.error({
@@ -71,8 +55,6 @@ const CreateUsersModal = (props: IProps) => {
                 description: dataCreateUser.message || 'Failed to create user'
             });
         }
-
-
     };
 
     return (
@@ -80,75 +62,89 @@ const CreateUsersModal = (props: IProps) => {
             title="Add New User"
             //closable={{ 'aria-label': 'Custom Close Button' }}
             open={isCreateModalOpen}
-            onOk={handleOk}
+            onOk={() => createForm.submit()}
             onCancel={() => {
                 setIsCreateModalOpen(false);
-                refreshForm();
+                handleRefreshForm();
             }}
             maskClosable={false}
         >
-            <div>
-                <label >Name</label>
-                <Input placeholder="Enter name"
-                    value={name}
-                    onChange={(event) => {
-                        setName(event.target.value);
-                    }} />
-            </div>
-            <div>
-                <label >Email</label>
-                <Input placeholder="Enter email"
-                    value={email}
-                    onChange={(event) => {
-                        setEmail(event.target.value);
-                    }} />
-            </div>
-            <div>
-                <label >Password</label>
-                <Input placeholder="Enter password"
-                    value={password}
-                    onChange={(event) => {
-                        setPassword(event.target.value);
-                    }}
-                />
-            </div>
+            <Form
+                name="basic"
+                onFinish={onFinish}
+                layout="vertical"
+                form={createForm}
+                style={{ marginBottom: 3 }}
+            >
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    label="Name"
+                    name="name"
+                    rules={[{ required: true, message: 'Please input your name!' }]}
+                >
+                    <Input />
+                </Form.Item>
 
-            <div>
-                <label >Age</label>
-                <Input placeholder="Enter age"
-                    value={age}
-                    onChange={(event) => {
-                        setAge(event.target.value);
-                    }}
-                />
-            </div>
-            <div>
-                <label >Gender</label>
-                <Input placeholder="Enter gender"
-                    value={gender}
-                    onChange={(event) => {
-                        setGender(event.target.value);
-                    }}
-                />
-            </div>
-            <div>
-                <label >Address</label>
-                <Input placeholder="Enter address"
-                    value={address}
-                    onChange={(event) => {
-                        setAddress(event.target.value);
-                    }}
-                />
-            </div>
-            <div>
-                <label >Role</label>
-                <Input placeholder="Enter role"
-                    value={role}
-                    onChange={(event) => {
-                        setRole(event.target.value);
-                    }}
-                />
-            </div>
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    label="Email"
+                    name="email"
+                    rules={[{ required: true, message: 'Please input your email!' }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                    <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    label="Age"
+                    name="age"
+                    rules={[{ required: true, message: 'Please input your age!' }]}
+                >
+                    <InputNumber style={{ width: "100%" }} />
+                </Form.Item>
+
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    name="gender" label="Gender" rules={[{ required: true }]}>
+                    <Select
+                        placeholder="Select a option and change input text above"
+                        allowClear
+                    >
+                        <Option value="MALE">MALE</Option>
+                        <Option value="FEMALE">FEMALE</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    label="Address"
+                    name="address"
+                    rules={[{ required: true, message: 'Please input your address!' }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    style={{ marginBottom: 3 }}
+                    name="role" label="Role" rules={[{ required: true }]}>
+                    <Select
+                        placeholder="Select a option and change input text above"
+                        allowClear
+                    >
+                        <Option value="ADMIN">ADMIN</Option>
+                        <Option value="USER">USER</Option>
+                    </Select>
+                </Form.Item>
+            </Form>
 
         </Modal>
     )
