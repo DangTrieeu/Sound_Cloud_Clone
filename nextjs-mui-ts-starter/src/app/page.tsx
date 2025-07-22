@@ -3,7 +3,7 @@ import App from "next/app";
 
 export default function HomePage() {
   return (
-    <AppHeader></AppHeader>
+    <div>homepage</div>
   );
 }
 
