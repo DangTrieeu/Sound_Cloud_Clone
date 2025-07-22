@@ -9,7 +9,7 @@ const AppFooter = () => {
     const hasMounted = useHasMounted();
 
     if (!hasMounted) return (<></>)//fragment
-    console.log(">>>check backend: ", process.env.NEXT_PUBLIC_BACKEND_URL)
+
     return (
         <div>
             <AppBar position="fixed"
