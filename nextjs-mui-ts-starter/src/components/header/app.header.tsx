@@ -19,6 +19,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
+import Link from 'next/link'
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -69,7 +70,6 @@ export default function AppHeader() {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-
         setAnchorEl(event.currentTarget);
 
     };
@@ -106,7 +106,14 @@ export default function AppHeader() {
             transformOrigin={{ horizontal: 'left', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem>
+                <Link href="/profile"
+                    style={{
+                        textDecoration: 'none',
+                        color: 'unset',
+                    }}
+                >Profile</Link>
+            </MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>
     );
@@ -196,13 +203,19 @@ export default function AppHeader() {
                             alignItems: 'center',
                             cursor: 'pointer',
 
+                            "> a": {
+                                textDecoration: 'none',
+                                color: '#fff',
+                            }
+
                         }}>
-                            <span>Playlist</span>
-                            <span>Likes</span>
+                            <Link href="/playlist">Playlists</Link>
+                            <Link href="/like">Likes</Link>
                             <span>Upload</span>
 
                             <Avatar
                                 onClick={handleProfileMenuOpen}
+
                             >TR</Avatar>
 
 
