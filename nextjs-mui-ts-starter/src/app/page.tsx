@@ -17,19 +17,42 @@ export default async function HomePage() {
   // )
   // console.log(">>> check tracks: ", await getTracksTop.json())
 
-  const getTracksTop = await sendRequest<IBackendRes<ITracksTop>>(
+  const getTracksTopCHILL = await sendRequest<IBackendRes<ITracksTop[]>>(
     {
       url: "http://localhost:8000/api/v1/tracks/top",
       method: "POST",
-      body: { category: "CHILL", limit: 2 }
+      body: { category: "CHILL", limit: 10 }
     }
   )
-  console.log(">>> check tracks: ", getTracksTop)
+  const getTracksTopWORKOUT = await sendRequest<IBackendRes<ITracksTop[]>>(
+    {
+      url: "http://localhost:8000/api/v1/tracks/top",
+      method: "POST",
+      body: { category: "WORKOUT", limit: 10 }
+    }
+  )
+  const getTracksTopPARTY = await sendRequest<IBackendRes<ITracksTop[]>>(
+    {
+      url: "http://localhost:8000/api/v1/tracks/top",
+      method: "POST",
+      body: { category: "PARTY", limit: 10 }
+    }
+  )
+  //console.log(">>> check tracks: ", getTracksTop)
   return (
     <Container>
-      <MainSlider />
-      <MainSlider />
-      <MainSlider />
+      <MainSlider
+        data={getTracksTopCHILL?.data ? getTracksTopCHILL.data : []}
+        title="Top chill"
+      />
+      <MainSlider
+        data={getTracksTopWORKOUT?.data ? getTracksTopWORKOUT.data : []}
+        title="Top workout"
+      />
+      <MainSlider
+        data={getTracksTopPARTY?.data ? getTracksTopPARTY.data : []}
+        title="Top party"
+      />
     </Container>
   );
 }
