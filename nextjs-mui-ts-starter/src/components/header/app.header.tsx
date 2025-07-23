@@ -20,6 +20,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Link from 'next/link'
+import { useSession, signIn, signOut } from "next-auth/react"
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -62,6 +63,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function AppHeader() {
+    const { data: session } = useSession()
+    //console.log(">>>check session: ", session)
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -214,14 +218,21 @@ export default function AppHeader() {
                             }
 
                         }}>
-                            <Link href="/playlist">Playlists</Link>
-                            <Link href="/like">Likes</Link>
-                            <span>Upload</span>
+                            {
+                                session ? <>
+                                    <Link href="/playlist">Playlists</Link>
+                                    <Link href="/like">Likes</Link>
+                                    <span>Upload</span>
 
-                            <Avatar
-                                onClick={handleProfileMenuOpen}
+                                    <Avatar
+                                        onClick={handleProfileMenuOpen}
 
-                            >TR</Avatar>
+                                    >TR</Avatar>
+                                </> : <>
+                                    <Link href="/api/auth/signin">Login</Link>
+                                </>
+                            }
+
 
 
                         </Box>
