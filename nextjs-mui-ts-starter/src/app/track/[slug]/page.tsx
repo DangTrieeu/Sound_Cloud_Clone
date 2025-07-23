@@ -10,7 +10,7 @@ const DetailTrackPage = ({
     const searchParams = useSearchParams()
     //lay theo key truyen tren url (o day key la audio)
     const search = searchParams.get('audio')
-    //console.log(">>>check search param: ", search);
+    // console.log(">>>check search param: ", search);
 
     return (
         <div> detail track page
