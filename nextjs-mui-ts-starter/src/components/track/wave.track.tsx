@@ -181,7 +181,7 @@ const WaveTrack = () => {
                                 width: "fit-content",
                                 color: "white"
                             }}>
-                                Hỏi Dân IT's song
+                                Song
                             </div>
                             <div style={{
                                 padding: "0 5px",
@@ -192,7 +192,7 @@ const WaveTrack = () => {
                                 color: "white"
                             }}
                             >
-                                Eric
+                                author
                             </div>
                         </div>
                     </div>
