@@ -1,9 +1,10 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 
 const WaveTrack = () => {
 
+    const currentRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
         const element = document.getElementById("track");
         if (element) {
@@ -19,7 +20,7 @@ const WaveTrack = () => {
     }, [])
 
     return (
-        <div id="track">
+        <div ref={currentRef}>
             wave track
         </div>
     )
