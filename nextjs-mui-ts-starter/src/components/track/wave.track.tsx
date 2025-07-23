@@ -1,32 +1,27 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useRef } from 'react'
-import WaveSurfer from 'wavesurfer.js'
+
+import { useRef, useMemo } from "react";
+import { useSearchParams } from 'next/navigation';
+import { useWavesurfer } from "@/utils/customHook";
+
 
 const WaveTrack = () => {
-
     const searchParams = useSearchParams()
-    //lay theo key truyen tren url (o day key la audio)
-    const fileName = searchParams.get('audio')
+    const fileName = searchParams.get('audio');
+    const containerRef = useRef<HTMLDivElement>(null);
 
-
-    const currentRef = useRef<HTMLDivElement>(null)
-    useEffect(() => {
-        const element = currentRef.current
-        if (element) {
-            const wavesurfer = WaveSurfer.create({
-                container: element,
-                waveColor: 'rgb(200, 0, 200)',
-                progressColor: 'rgb(100, 0, 100)',
-                url: `/api?audio=${fileName}`,
-            })
-
+    const optionsMemo = useMemo(() => {
+        return {
+            waveColor: 'rgb(200, 0, 200)',
+            progressColor: 'rgb(100, 0, 100)',
+            url: `/api?audio=${fileName}`,
         }
+    }, []);
 
-    }, [])
+    const wavesurfer = useWavesurfer(containerRef, optionsMemo);
 
     return (
-        <div ref={currentRef}>
+        <div ref={containerRef}>
             wave track
         </div>
     )
