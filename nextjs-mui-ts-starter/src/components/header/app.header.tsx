@@ -64,7 +64,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function AppHeader() {
     const { data: session } = useSession()
-    //console.log(">>>check session: ", session)
+    console.log(">>>check session: ", session)
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -118,7 +118,10 @@ export default function AppHeader() {
                     }}
                 >Profile</Link>
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={() => {
+                handleMenuClose();
+                signOut();
+            }}>Logout</MenuItem>
         </Menu>
     );
 
@@ -229,7 +232,9 @@ export default function AppHeader() {
 
                                     >TR</Avatar>
                                 </> : <>
-                                    <Link href="/api/auth/signin">Login</Link>
+                                    <Link href="#"
+                                        onClick={() => signIn()}
+                                    >Login</Link>
                                 </>
                             }
 
